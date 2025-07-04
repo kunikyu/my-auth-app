@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       const token = await new SignJWT({ userId: user.id, email: user.email })
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
-        .setExpirationTime('1h')
+        .setExpirationTime('5m')
         .sign(key);
 
       cookies().set('session-token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', path: '/', sameSite: 'lax' });

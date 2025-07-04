@@ -11,8 +11,9 @@ Next.js (App Router) を使用して、認証ライブラリに頼らずにト�
 -   **トークンベース認証**: JWT (JSON Web Token) を `HttpOnly` Cookie に保存する安全な認証方式。
 -   **新規アカウント登録**: メールアドレスとパスワードで新しいアカウントを作成できます。
 -   **ログイン・ログアウト**: 登録した情報でログイン・ログアウトが可能です。
+-   **パスワード変更**: ログイン中のユーザーが、現在のパスワードを検証した上で新しいパスワードに変更できます。
 -   **アカウントロック**: 連続で5回ログインに失敗すると、アカウントが15分間ロックされます。
--   **セッションタイムアウト**: ログイン後、1分間操作がないとセッションが切れ、再ログインが必要になります。
+-   **セッションタイムアウト**: ログイン後、5分間操作がないとセッションが切れ、再ログインが必要になります。
 -   **ログインIDの保存**: 「次回から自動入力する」機能により、メールアドレスをブラウザに記憶させることができます。
 -   **動的なヘッダー**: ログイン状態に応じて、表示されるメニュー（メールアドレス/ログアウトボタン、ログイン/新規登録ボタン）が切り替わります。
 -   **保護されたルート**: Middlewareを使用し、未ログインのユーザーが特定のページ（例: `/dashboard`）にアクセスするのを防ぎます。
@@ -62,10 +63,10 @@ Next.js (App Router) を使用して、認証ライブラリに頼らずにト�
     ```
 
 3.  **環境変数を設定**:
-    プロジェクトのルートに`.env.local`ファイルを作成し、以下の内容を記述します。`JWT_SECRET_KEY`には必ずご自身で考えた、長くてランダムな文字列を設定してください。
+    プロジェクトのルートに`.env`ファイルを作成し、以下の内容を記述します。`JWT_SECRET_KEY`には必ずご自身で考えた、長くてランダムな文字列を設定してください。
     ```env
     # Prismaが使用するデータベースファイルのパス
-    DATABASE_URL="file:./prisma/dev.db"
+    DATABASE_URL="file:./dev.db"
 
     # JWTの署名に使用する秘密鍵
     JWT_SECRET_KEY="your-super-secret-and-long-random-string"
@@ -98,6 +99,7 @@ Next.js (App Router) を使用して、認証ライブラリに頼らずにト�
 ```
 my-auth-app/
 ├── 📁 prisma/
+│   ├── 📄 dev.db
 │   ├── 📄 schema.prisma
 │   └── 📄 seed.ts
 ├── 📁 src/
@@ -107,14 +109,33 @@ my-auth-app/
 │   ├── 📁 app/
 │   │   ├── 📁 api/
 │   │   │   ├── 📁 login/
+│   │   │   │   └── 📄 route.ts
 │   │   │   ├── 📁 logout/
-│   │   │   └── 📁 signup/
+│   │   │   │   └── 📄 route.ts
+│   │   │   ├── 📁 signup/
+│   │   │   │   └── 📄 route.ts
+│   │   │   └── 📁 user/
+│   │   │       └── 📁 change-password/
+│   │   │           └── 📄 route.ts
 │   │   ├── 📁 dashboard/
+│   │   │   ├── 📄 page.tsx
+│   │   │   └── 📁 change-password/
+│   │   │       └── 📄 page.tsx
 │   │   ├── 📁 login/
-│   │   └── 📁 signup/
+│   │   │   └── 📄 page.tsx
+│   │   ├── 📁 signup/
+│   │   │   └── 📄 page.tsx
+│   │   ├── 📄 globals.css
+│   │   ├── 📄 layout.tsx
+│   │   └── 📄 page.tsx
 │   ├── 📁 lib/
 │   │   └── 📄 session.ts
 │   └── 📄 middleware.ts
 ├── 📄 .env
-└── 📄 package.json
+├── 📄 .gitignore
+├── 📄 next.config.mjs
+├── 📄 package-lock.json
+├── 📄 package.json
+├── 📄 README.md
+└── 📄 tsconfig.json
 ```
