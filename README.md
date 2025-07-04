@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js カスタム認証機能 サンプルアプリ
 
-## Getting Started
+Next.js (App Router) を使用して、認証ライブラリに頼らずにトークンベースの認証機能をゼロから実装するサンプルアプリケーションです。
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 主な機能
+
+このアプリケーションには、基本的なWebサイトに必要な認証・認可機能が一通り含まれています。
+
+-   **トークンベース認証**: JWT (JSON Web Token) を `HttpOnly` Cookie に保存する安全な認証方式。
+-   **新規アカウント登録**: メールアドレスとパスワードで新しいアカウントを作成できます。
+-   **ログイン・ログアウト**: 登録した情報でログイン・ログアウトが可能です。
+-   **アカウントロック**: 連続で5回ログインに失敗すると、アカウントが15分間ロックされます。
+-   **セッションタイムアウト**: ログイン後、1分間操作がないとセッションが切れ、再ログインが必要になります。
+-   **ログインIDの保存**: 「次回から自動入力する」機能により、メールアドレスをブラウザに記憶させることができます。
+-   **動的なヘッダー**: ログイン状態に応じて、表示されるメニュー（メールアドレス/ログアウトボタン、ログイン/新規登録ボタン）が切り替わります。
+-   **保護されたルート**: Middlewareを使用し、未ログインのユーザーが特定のページ（例: `/dashboard`）にアクセスするのを防ぎます。
+
+---
+
+## スクリーンショット
+
+### 新規登録ページ
+ユーザーが新しいアカウントを作成する際のフォーム画面です。
+
+
+
+### ログインページ
+既存のユーザーがログインするための画面です。「次回から自動入力する」チェックボックスも備えています。
+
+
+
+### トップページ（ログイン中）
+ログインに成功すると、ヘッダーにユーザーのメールアドレスとログアウトボタンが表示され、パーソナライズされたウェルカムメッセージが表示されます。
+
+
+
+---
+
+## 使用技術
+
+-   **フレームワーク**: Next.js 14 (App Router)
+-   **言語**: TypeScript
+-   **データベース**: Prisma, SQLite
+-   **認証**: `jose` (JWT), `bcryptjs` (パスワードハッシュ化)
+-   **スタイリング**: インラインCSS
+
+---
+
+## セットアップと実行方法
+
+1.  **リポジトリをクローン**:
+    ```bash
+    git clone <repository-url>
+    cd <repository-name>
+    ```
+
+2.  **依存関係をインストール**:
+    ```bash
+    npm install
+    ```
+
+3.  **環境変数を設定**:
+    プロジェクトのルートに`.env.local`ファイルを作成し、以下の内容を記述します。`JWT_SECRET_KEY`には必ずご自身で考えた、長くてランダムな文字列を設定してください。
+    ```env
+    # Prismaが使用するデータベースファイルのパス
+    DATABASE_URL="file:./prisma/dev.db"
+
+    # JWTの署名に使用する秘密鍵
+    JWT_SECRET_KEY="your-super-secret-and-long-random-string"
+    ```
+
+4.  **データベースをセットアップ**:
+    以下のコマンドで、`prisma/schema.prisma`に基づいてデータベースとテーブルを作成します。
+    ```bash
+    npx prisma migrate dev
+    ```
+
+5.  **初期データを投入 (任意)**:
+    テスト用のユーザー (`test@example.com`) を作成するために、以下のシードコマンドを実行します。
+    ```bash
+    npx prisma db seed
+    ```
+
+6.  **開発サーバーを起動**:
+    ```bash
+    npm run dev
+    ```
+    ブラウザで `http://localhost:3000` を開きます。
+
+---
+
+## ディレクトリ構成
+
+主要なファイルの構成です。
+
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+my-auth-app/
+├── 📁 prisma/
+│   ├── 📄 schema.prisma
+│   └── 📄 seed.ts
+├── 📁 src/
+│   ├── 📁 _Components/
+│   │   ├── 📄 Header.tsx
+│   │   └── 📄 LogoutButton.tsx
+│   ├── 📁 app/
+│   │   ├── 📁 api/
+│   │   │   ├── 📁 login/
+│   │   │   ├── 📁 logout/
+│   │   │   └── 📁 signup/
+│   │   ├── 📁 dashboard/
+│   │   ├── 📁 login/
+│   │   └── 📁 signup/
+│   ├── 📁 lib/
+│   │   └── 📄 session.ts
+│   └── 📄 middleware.ts
+├── 📄 .env
+└── 📄 package.json
+```
