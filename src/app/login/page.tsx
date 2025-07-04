@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
-  const router = useRouter();
+//   const router = useRouter();
 
   useEffect(() => {
     const rememberedEmail = localStorage.getItem('rememberedEmail');
@@ -34,7 +34,8 @@ export default function LoginPage() {
       } else {
         localStorage.removeItem('rememberedEmail');
       }
-      router.push('/dashboard');
+        // router.push('/dashboard') から変更
+      window.location.href = '/dashboard';
     } else {
       const data = await res.json();
       setError(data.message || 'ログインに失敗しました');
